@@ -7,6 +7,21 @@ function debug(...message) {
   }
 }
 
+//TOOD move stuff in to fuctions... 
+/*
+function registerKeyboardEvents(scene){
+  scene.onKeyboardObservable.add((kbInfo) => {
+    switch (kbInfo.type) {
+        case BABYLON.KeyboardEventTypes.KEYDOWN:
+            console.log("KEY DOWN: ", kbInfo.event.key);
+            break;
+        case BABYLON.KeyboardEventTypes.KEYUP:
+            console.log("KEY UP: ", kbInfo.event.keyCode);
+            break;
+    }
+});
+}*/
+
 function createScene() {
   // This creates a basic Babylon Scene object (non-mesh)
   var scene = new BABYLON.Scene(engine);
@@ -36,6 +51,23 @@ function createScene() {
 
   // Our built-in 'sphere' shape. Params: name, options, scene
   var sphereArray = [];
+  const noKeyPressed = 'no';
+  var keyPressing = noKeyPressed;
+
+  //Add KeyboardLister 
+  //registerKeyboardEvents(scene);
+    scene.onKeyboardObservable.add((kbInfo) => {
+    switch (kbInfo.type) {
+        case BABYLON.KeyboardEventTypes.KEYDOWN:
+            console.log("KEY DOWN: ", kbInfo.event.key);
+        keyPressing = kbInfo.event.key;//TODO make this some kind of list to able to handle more then one key at a time being pressed. Maybe look for a framework?? 
+            break;
+        case BABYLON.KeyboardEventTypes.KEYUP:
+            console.log("KEY UP: ", kbInfo.event.keyCode);
+        keyPressing = noKeyPressed;//TODO handle list of keys being pressed
+            break;
+    }
+  });
   // Move the sphere upward 1/2 its 
   const spaceNumber = 8;
   const size = 10;
@@ -63,6 +95,11 @@ function createScene() {
         debug("POINTER TAP");
         if (pointerInfo.event.button == 2) {
           camera.focusOn([pointerInfo.pickInfo.pickedMesh], true);
+          if(keyPressing == 'd'){
+            var arrayOfProbs = pointerInfo.pickInfo.pickedMesh.name.split(":");//LOL WTF!!! copied code to not have torun this a for all mouse movements. //TODO not this 
+            
+            console.log(" Clicking and key pressing! Location y: "+ arrayOfProbs[1]+ "\tx: "+ arrayOfProbs[2] + "\t z:"+arrayOfProbs[3]+ "\t colorState: "+arrayOfProbs[4]);
+          }
         }
         break;
       case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
@@ -129,10 +166,12 @@ function createScene() {
 
 
   // Our built-in 'ground' shape. Params: name, options, scene
+  //@Shaun Is the ground needed? Like it gets in the way of seeing stuff?
+  /*rm -rfv
   var ground = BABYLON.MeshBuilder.CreateGround("ground", {
     width: 2,
-    height: 2
+    height: 6
   }, scene);
-
+*/
   return scene;
 }
